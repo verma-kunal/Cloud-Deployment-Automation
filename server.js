@@ -52,10 +52,10 @@ app.get("/workshop3", (req, res) => {
 
 // ____________________________________________________________________________________
 
+const domainURL = process.env.DOMAIN;
 app.post("/create-checkout-session/:pid", async (req, res) => {
-  const domainURL = process.env.DOMAIN;
-  const priceId = req.params.pid;
   
+  const priceId = req.params.pid;
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     success_url: `${domainURL}/success?id={CHECKOUT_SESSION_ID}`,
@@ -78,5 +78,5 @@ app.post("/create-checkout-session/:pid", async (req, res) => {
 // Server listening:
 app.listen(port, () => {
   console.log(`Server listening on port: ${port}`);
-  console.log('You may access you app at: http://13.235.151.196:3000/');
+  console.log(`You may access you app at: ${domainURL}`);
 });
