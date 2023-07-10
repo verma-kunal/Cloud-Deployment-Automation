@@ -14,7 +14,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'docker build -t vkunal/aws-app .'
+                sh 'sudo docker build -t vkunal/aws-app .'
             }
     }
         stage('Login') {
@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Push') {
             steps {
-                sh 'docker push vkunal/aws-app'
+                sh 'sudo docker push vkunal/aws-app'
             }
         }
 
