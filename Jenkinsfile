@@ -8,20 +8,26 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build and Push Docker Image') {
             steps {
                 script {
-                    sh 'sudo docker build -t aws-app .'
+                    def dockerImage = docker.build('vkunal/aws-app:${env.BUILD_NUMBER}')
+                    docker.withRegistry('https://hub.docker.com/', 'dockerhub') {
+                        dockerImage.push()
+                    }
                 }
             }
         }
 
-        stage('Run Docker Image') {
+        stage('Pull and Run Docker Image') {
             steps {
                 script {
-                    sh 'sudo docker run -dp 3000:3000 aws-app:latest'
+                    docker.withRegistry('https://hub.docker.com/', 'dockerhub') {
+                        def dockerImage = docker.image('vkunal/aws-app:${env.BUILD_NUMBER}')
+                        dockerImage.pull()
+                        dockerImage.run('-dp 3000:3000')
+                    }
                 }
             }
-        }
     }
 }
