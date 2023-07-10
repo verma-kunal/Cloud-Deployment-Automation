@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    } 
+
     stages {
         stage('Checkout') {
             steps {
@@ -8,27 +12,21 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build') {
             steps {
-                script {
-                    def dockerImage = docker.build('vkunal/aws-app:${env.BUILD_NUMBER}')
-                    docker.withRegistry('https://hub.docker.com/', 'dockerhub') {
-                        dockerImage.push()
-                    }
-                }
+                sh 'docker build -t vkunal/aws-app .'
+            }
+    }
+        stage('Login') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('Push') {
+            steps {
+                sh 'docker push vkunal/aws-app'
             }
         }
 
-        stage('Pull and Run Docker Image') {
-            steps {
-                script {
-                    docker.withRegistry('https://hub.docker.com/', 'dockerhub') {
-                        def dockerImage = docker.image('vkunal/aws-app:${env.BUILD_NUMBER}')
-                        dockerImage.pull()
-                        dockerImage.run('-dp 3000:3000')
-                    }
-                }
-            }
-        }
     }
 }
