@@ -11,7 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t aws-app .'
+                    sh 'sudo docker build -t aws-app .'
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Run Docker Image') {
             steps {
                 script {
-                    sh 'docker run -dp 3000:3000 aws-app:latest'
+                    sh 'sudo docker run -dp 3000:3000 aws-app:latest'
                 }
             }
         }
