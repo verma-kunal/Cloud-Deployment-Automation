@@ -1,30 +1,30 @@
 pipeline {
     agent any
-
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker-creds')
-    }
-
     stages {
         stage('Checkout') {
             steps {
+                // Checkout the repository
                 checkout scm
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
-                script{
-                    sh 'docker build -t vkunal/demo:latest .'
+                // Build a new Docker image with the changes
+                script {
+                    docker.withRegistry('https://hub.docker.com/', 'docker-creds') {
+                        def customImage = docker.build('nodejs-app')
+                        customImage.push('latest')
+                    }
                 }
             }
         }
 
         stage('Run Container') {
             steps {
-                // Run the Docker container
+                // Run the Docker container on a specific port
                 script {
-                    docker.image('vkunal/demo:latest').run('-dp 8080:80')
+                    docker.image('nodejs-app:latest').run('-p 8080:8080')
                 }
             }
         }
