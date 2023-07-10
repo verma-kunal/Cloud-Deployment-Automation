@@ -27,6 +27,11 @@ pipeline {
                 sh 'sudo docker push vkunal/aws-app'
             }
         }
+        stage('Pull Image & Start Container')
+            steps{
+                sh 'sudo docker push vkunal/aws-app:latest'
+                sh 'docker run -dp 3000:3000 aws-app:latest'
+            }
 
     }
 }
