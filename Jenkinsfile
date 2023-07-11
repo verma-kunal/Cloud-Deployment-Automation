@@ -21,7 +21,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script{
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    def customImage = docker.build("nodejs-app:${env.BUILD_ID}")
+
                 }
             }
         }
