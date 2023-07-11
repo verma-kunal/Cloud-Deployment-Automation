@@ -16,7 +16,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh "sudo docker build -t ${registry}:${env.BUILD_ID}"
+                    sh "sudo docker build -t ${registry}:${env.BUILD_ID} ."
 
                 }
             }
