@@ -10,17 +10,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                def customImage = docker.build("nodejs-app:${env.BUILD_ID}")
+                script{
+                    def customImage = docker.build("nodejs-app:${env.BUILD_ID}")
+                }
             }
         }
+
         stage('Start Container'){
             steps{
-                sh "sudo docker run -dp 3000:3000 ${customImage}"
+                script{
+                    sh "sudo docker run -dp 3000:3000 ${customImage}"
+                }
             }
         }
         stage('Push to DockerHub') {
-           docker.withRegistry('https://hub.docker.com/', 'dockerhub'){
-                customImage.push()
+           steps {
+                script{
+                    docker.withRegistry('https://hub.docker.com/', 'dockerhub'){
+                        customImage.push()
+                    }
+                }
            }
         }
     }
