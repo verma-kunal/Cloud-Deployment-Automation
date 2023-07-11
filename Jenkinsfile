@@ -34,7 +34,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script{
-                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential) {
+                    docker.withRegistry( '', registryCredential) {
                         sh "sudo docker push ${registry}:${commitHash}"
                     }
 
