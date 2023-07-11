@@ -32,7 +32,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script{
-                    docker.withRegistry( 'https://hub.docker.com/', registryCredential ) {
+                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
                         sh "docker push ${registry}:${env.BUILD_ID}"
                     }
 
