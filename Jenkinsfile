@@ -11,7 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh 'sudo docker build -t vkunal/aws-app .'
+                    sh "sudo docker build -t vkunal/aws-app:${env.BUILD_ID} ."
                 }
             }
         }
@@ -19,18 +19,18 @@ pipeline {
         stage('Start Container'){
             steps{
                 script{
-                    sh "sudo docker run -dp 3000:3000 vkunal/aws-app:latest"
+                    sh "sudo docker run -dp 3000:3000 vkunal/aws-app:${env.BUILD_ID}"
                 }
             }
         }
-        // stage('Push to DockerHub') {
-        //    steps {
-        //         script{
-        //             docker.withRegistry('https://hub.docker.com/', 'dockerhub'){
-        //                 customImage.push()
-        //             }
-        //         }
-        //    }
-        // }
+        stage('Login & Push to DockerHub') {
+           steps {
+                script{
+                    docker.withRegistry('https://hub.docker.com/', 'dockerhub'){
+                        sh "docker push vkunal/aws-app:${env.BUILD_ID}"
+                    }
+                }
+            }
+        }
     }
 }
