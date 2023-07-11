@@ -1,37 +1,27 @@
 pipeline {
     agent any
 
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
-    } 
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Git') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Build Docker Image') {
             steps {
-                sh 'sudo docker build -t vkunal/aws-app .'
+                def customImage = docker.build("nodejs-app:${env.BUILD_ID}")
             }
         }
-        stage('Login') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-            }
-        }
-        stage('Push') {
-            steps {
-                sh 'sudo docker push vkunal/aws-app'
-            }
-        }
-        stage('Pull Image & Start Container'){
+        stage('Start Container'){
             steps{
-                sh 'sudo docker push vkunal/aws-app:latest'
-                sh 'docker run -dp 3000:3000 aws-app:latest'
+                sh "sudo docker run -dp 3000:3000 ${customImage}"
             }
+        }
+        stage('Push to DockerHub') {
+           docker.withRegistry('https://hub.docker.com/', 'dockerhub'){
+                customImage.push()
+           }
         }
     }
 }
