@@ -1,11 +1,5 @@
 pipeline {
-    agent{
-        docker {
-            image 'docker:stable'
-            reuseNode true
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     options{
         buildDiscarder(logRotator(numToKeepStr: '5', daysToKeepStr: '5'))
@@ -18,16 +12,29 @@ pipeline {
     }
 
     stages {
-        stage('Checkout Git') {
-            steps {
-                checkout scm
-            }
-        }
 
         stage('Build Docker Image') {
             steps {
                 script{
-                    def customImage = docker.build("nodejs-app:${env.BUILD_ID}")
+                    sh "sudo docker build -t ${registry}:${env.BUILD_ID}"
+
+                }
+            }
+        }
+        stage('Run Docker Container') {
+            steps {
+                script{
+                    sh "sudo docker run -dp 3000:3000 ${registry}:${env.BUILD_ID}"
+
+                }
+            }
+        }
+        stage('Push to DockerHub') {
+            steps {
+                script{
+                    docker.withRegistry( 'https://hub.docker.com/', registryCredential ) {
+                        sh "docker push ${registry}:${env.BUILD_ID}"
+                    }
 
                 }
             }
