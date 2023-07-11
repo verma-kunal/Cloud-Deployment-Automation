@@ -8,7 +8,9 @@ pipeline {
     environment{
         
         registry = "vkunal/aws-app"
-        registryCredential = 'dockerhub'        
+        registryCredential = 'dockerhub' 
+        commitHash = sh(returnStdout: true, script: 'git rev-parse --short HEAD').trim()
+       
     }
 
     stages {
@@ -16,7 +18,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script{
-                    sh "sudo docker build -t ${registry}:${env.BUILD_ID} ."
+                    sh "sudo docker build -t ${registry}:${commitHash} ."
 
                 }
             }
@@ -24,7 +26,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script{
-                    sh "sudo docker run -dp 3000:3000 ${registry}:${env.BUILD_ID}"
+                    sh "sudo docker run -dp 3000:3000 ${registry}:${commitHash}"
 
                 }
             }
@@ -32,8 +34,8 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
                 script{
-                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                        sh "docker push ${registry}:${env.BUILD_ID}"
+                    docker.withRegistry( 'https://index.docker.io/v1/', registryCredential) {
+                        sh "sudo docker push ${registry}:${commitHash}"
                     }
 
                 }
