@@ -1,6 +1,6 @@
 # Deployment automation on AWS using Jenkins CI/CD
 
-![img](https://github.com/verma-kunal/Cloud-Deployment-Automation/assets/72245772/252d20d9-fec1-4b21-8f5c-8c1089d618fd)
+![project](https://github.com/verma-kunal/Cloud-Deployment-Automation/assets/72245772/e64c29b3-615c-451e-b8fa-b2affdec04cf)
 
 ## Testing the project locally
 
