@@ -25,3 +25,7 @@ SECRET_KEY="TEST_STRIPE_SECRET_API_KEY"
 npm install
 npm run start
 ```
+
+## Tutorial
+
+A detailed guide on how to build this project can be in the [blog post](https://kverma.hashnode.dev/aws-cloud-deployment-automation-with-jenkins-ci).
